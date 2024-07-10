@@ -53,6 +53,9 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   try {
     const { name, minEmployees, maxEmployees } = req.query;
+    console.log("NAME: ", name);
+    console.log("minEmployees: ", minEmployees);
+    console.log("maxEmployees: ", maxEmployees);
     if (minEmployees > maxEmployees) {
       throw new BadRequestError('Minimum employees cannot be greater than max employees');
     }
