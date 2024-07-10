@@ -50,21 +50,42 @@ class Company {
    * */
 
   static async findAll(name, minEmployees, maxEmployees) {
+    let query = `SELECT handle,
+                    name,
+                    description,
+                    num_employees AS "numEmployees",
+                    logo_url AS "logoUrl"
+                  FROM companies`;
+
+    let queryVar = [];
+    let filters = [];
+
     if (name) {
-      name = '';
+      queryVar.push(`%${name}%`);
+      filters.push(`name ILIKE $${queryVar.length}`);
     }
 
-    const companiesRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-          FROM companies
-          WHERE name ILIKE "%${name}%" 
-          AND num_employees > ${minEmployees}
-          AND num_employees < ${maxEmployees}
-          ORDER BY name`);
+    if (minEmployees) {
+      queryVar.push(minEmployees);
+      filters.push(`num_employees >= $${queryVar.length}`);
+    }
+
+    if (maxEmployees) {
+      queryVar.push(maxEmployees);
+      filters.push(`num_employees <= $${queryVar.length}`);
+    }
+
+    if (filters.length > 0) {
+      query += ' WHERE ' + filters.join(' AND ');
+    }
+
+    // console.log("NAME: ", name);
+    // console.log("minEmployees: ", minEmployees);
+    // console.log("maxEmployees: ", maxEmployees);
+    // console.log("QUERY: ", query);
+
+    const companiesRes = await db.query(query, queryVar);
+    
     return companiesRes.rows;
   }
 
