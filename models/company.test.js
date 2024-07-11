@@ -86,11 +86,14 @@ describe("findAll", function () {
     ]);
   });
 
-  test('works: name filter', async function () {
-    const name = 'c1';
-    const minEmployees = undefined;
-    const maxEmployees = undefined;
-    const companies = await Company.findAll(name, minEmployees, maxEmployees);
+  test('works: one filter', async function () {
+    const filters = {
+      name: 'c1'
+    }
+    // const name = 'c1';
+    // const minEmployees = undefined;
+    // const maxEmployees = undefined;
+    const companies = await Company.findAll(filters);
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -102,11 +105,44 @@ describe("findAll", function () {
     ]);
   });
 
-  test('works: min-max employees filter', async function () {
-    const name = undefined;
-    const minEmployees = 2;
-    const maxEmployees = 3;
-    const companies = await Company.findAll(name, minEmployees, maxEmployees);
+  test('works: two filter', async function () {
+    const filters = {
+      minEmployees: 2,
+      maxEmployees: 3
+    }
+    // const name = undefined;
+    // const minEmployees = 2;
+    // const maxEmployees = 3;
+    const companies = await Company.findAll(filters);
+
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      }
+    ]);
+  });
+
+  test('works: three filter', async function () {
+    const filters = {
+      name: 'c',
+      minEmployees: 2,
+      maxEmployees: 3
+    }
+    // const name = 'c';
+    // const minEmployees = 2;
+    // const maxEmployees = 3;
+    const companies = await Company.findAll(filters);
 
     expect(companies).toEqual([
       {
@@ -126,27 +162,16 @@ describe("findAll", function () {
     ]);
   });
   
-  test('works: min-max employees filter', async function () {
-    const name = 'none';
-    const minEmployees = undefined;
-    const maxEmployees = undefined;
-    const companies = await Company.findAll(name, minEmployees, maxEmployees);
+  test('works: filter resulting in empty list', async function () {
+    const filters = {
+      name: 'none'
+    }
+    // const name = 'none';
+    // const minEmployees = undefined;
+    // const maxEmployees = undefined;
+    const companies = await Company.findAll(filters);
 
     expect(companies).toEqual([]);
-  });
-
-  test('bad request for min > max', async function () {
-    try {
-      const name = undefined;
-      const minEmployees = 3;
-      const maxEmployees = 1;
-      const companies = await Company.findAll(name, minEmployees, maxEmployees);
-
-      expect(companies).toEqual([]);
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-
   });
 });
 

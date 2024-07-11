@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companySearchSchema = require("../schemas/companySearch.json");
 
 const router = new express.Router();
 
@@ -52,14 +53,27 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    const { name, minEmployees, maxEmployees } = req.query;
-    console.log("NAME: ", name);
-    console.log("minEmployees: ", minEmployees);
-    console.log("maxEmployees: ", maxEmployees);
-    if (minEmployees > maxEmployees) {
+    const query = req.query;
+
+    if (query.minEmployees) {
+      query.minEmployees = Number(query.minEmployees);
+    }
+
+    if (query.maxEmployees) {
+      query.maxEmployees = Number(query.maxEmployees);
+    }
+
+    //check if filter fields entered are valid
+    const validator = jsonschema.validate(query, companySearchSchema);
+
+    if (!validator.valid) {
+      throw new BadRequestError('Invalid query parameter(s). Please try again');
+    }
+
+    if (query.minEmployees > query.maxEmployees) {
       throw new BadRequestError('Minimum employees cannot be greater than max employees');
     }
-    const companies = await Company.findAll(name, minEmployees, maxEmployees);
+    const companies = await Company.findAll(query);
     return res.json({ companies });
   } catch (err) {
     return next(err);

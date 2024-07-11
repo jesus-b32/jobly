@@ -49,15 +49,20 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(name, minEmployees, maxEmployees) {
-    let query = `SELECT handle,
+  static async findAll(query = {}) {
+    const { name, minEmployees, maxEmployees } = query;
+    
+    //base dbQuery. The optional filters will appended to the end of the db query
+    let dbQuery = `SELECT handle,
                     name,
                     description,
                     num_employees AS "numEmployees",
                     logo_url AS "logoUrl"
                   FROM companies`;
 
+    //stores the query variable of filters that will be used in db.query
     let queryVar = [];
+    //stores the db queries for the optional three filter
     let filters = [];
 
     if (name) {
@@ -75,17 +80,13 @@ class Company {
       filters.push(`num_employees <= $${queryVar.length}`);
     }
 
+    //create the entire filter db query if there are any filter
     if (filters.length > 0) {
-      query += ' WHERE ' + filters.join(' AND ');
+      dbQuery += ' WHERE ' + filters.join(' AND ');
     }
 
-    // console.log("NAME: ", name);
-    // console.log("minEmployees: ", minEmployees);
-    // console.log("maxEmployees: ", maxEmployees);
-    // console.log("QUERY: ", query);
-
-    const companiesRes = await db.query(query, queryVar);
-    
+    dbQuery += ' ORDER BY name';
+    const companiesRes = await db.query(dbQuery, queryVar);
     return companiesRes.rows;
   }
 

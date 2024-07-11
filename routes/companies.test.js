@@ -96,6 +96,80 @@ describe("GET /companies", function () {
     });
   });
 
+  test("ok with one filter", async function () {
+    const resp = await request(app).get("/companies?name=c1");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c1",
+              name: "C1",
+              description: "Desc1",
+              numEmployees: 1,
+              logoUrl: "http://c1.img",
+            }
+          ]
+    });
+  });
+
+
+  test("ok with two filters", async function () {
+    const resp = await request(app).get("/companies?minEmployees=0&maxEmployees=2");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c1",
+              name: "C1",
+              description: "Desc1",
+              numEmployees: 1,
+              logoUrl: "http://c1.img",
+            },
+            {
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            },
+          ]
+    });
+  });
+
+  test("ok with all filters", async function () {
+    const resp = await request(app).get("/companies?name=c&minEmployees=2&maxEmployees=3");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            },
+            {
+              handle: "c3",
+              name: "C3",
+              description: "Desc3",
+              numEmployees: 3,
+              logoUrl: "http://c3.img",
+            }
+          ]
+    });
+  });
+  
+  test("Bad request with minEmployees > maxEmployees", async function () {
+      const resp = await request(app).get("/companies?minEmployees=3&maxEmployees=0");
+      expect(resp.statusCode).toEqual(400);
+  });
+
+  test("Bad request with invalid query parameters", async function () {
+      const resp = await request(app).get("/companies?bad=0");
+      expect(resp.statusCode).toEqual(400);
+      
+  });
+
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This
