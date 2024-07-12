@@ -90,9 +90,6 @@ describe("findAll", function () {
     const filters = {
       name: 'c1'
     }
-    // const name = 'c1';
-    // const minEmployees = undefined;
-    // const maxEmployees = undefined;
     const companies = await Company.findAll(filters);
     expect(companies).toEqual([
       {
@@ -110,9 +107,6 @@ describe("findAll", function () {
       minEmployees: 2,
       maxEmployees: 3
     }
-    // const name = undefined;
-    // const minEmployees = 2;
-    // const maxEmployees = 3;
     const companies = await Company.findAll(filters);
 
     expect(companies).toEqual([
@@ -139,9 +133,6 @@ describe("findAll", function () {
       minEmployees: 2,
       maxEmployees: 3
     }
-    // const name = 'c';
-    // const minEmployees = 2;
-    // const maxEmployees = 3;
     const companies = await Company.findAll(filters);
 
     expect(companies).toEqual([
@@ -166,9 +157,6 @@ describe("findAll", function () {
     const filters = {
       name: 'none'
     }
-    // const name = 'none';
-    // const minEmployees = undefined;
-    // const maxEmployees = undefined;
     const companies = await Company.findAll(filters);
 
     expect(companies).toEqual([]);

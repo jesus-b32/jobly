@@ -20,6 +20,8 @@ function authenticateJWT(req, res, next) {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
+
+      //verify token signature and return payload if valid
       res.locals.user = jwt.verify(token, SECRET_KEY);
     }
     return next();
@@ -29,6 +31,9 @@ function authenticateJWT(req, res, next) {
 }
 
 /** Middleware to use when they must be logged in.
+ * res.locals.user comes from the authenticateJWT middleware,
+ * which stores token payload to res.locals.user
+ * {username: user.username, isAdmin: user.isAdmin || false}
  *
  * If not, raises Unauthorized.
  */
@@ -42,8 +47,40 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
+/** Middleware to use when admin authorization needed.
+ *
+ * If not, raises Unauthorized.
+ */
+
+function ensureIsAdmin(req, res, next) {
+  try {
+    const user = res.locals;
+    if (!user || !user.is_admin) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+/** Middleware to use when admin authorization needed or ensure username in token matches the username parameter in route.
+ *
+ * If not, raises Unauthorized.
+ */
+
+function ensureCorrectUserOrIsAdmin(req, res, next) {
+  try {
+    const user = res.locals;
+    if (!(user && (user.isAdmin || user.username === req.params.username))) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
+  ensureIsAdmin,
+  ensureCorrectUserOrIsAdmin
 };
