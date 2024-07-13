@@ -10,7 +10,8 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  u1Token,
+  u1Token, //isAdmin
+  u2Token //isnotAdmin
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -29,7 +30,7 @@ describe("POST /companies", function () {
     numEmployees: 10,
   };
 
-  test("ok for users", async function () {
+  test("ok for admin users", async function () {
     const resp = await request(app)
         .post("/companies")
         .send(newCompany)
@@ -38,6 +39,14 @@ describe("POST /companies", function () {
     expect(resp.body).toEqual({
       company: newCompany,
     });
+  });
+
+  test("UnauthorizedError for non-admin users", async function () {
+    const resp = await request(app)
+        .post("/companies")
+        .send(newCompany)
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("bad request with missing data", async function () {
@@ -220,7 +229,7 @@ describe("GET /companies/:handle", function () {
 /************************************** PATCH /companies/:handle */
 
 describe("PATCH /companies/:handle", function () {
-  test("works for users", async function () {
+  test("works for admin users", async function () {
     const resp = await request(app)
         .patch(`/companies/c1`)
         .send({
@@ -238,7 +247,7 @@ describe("PATCH /companies/:handle", function () {
     });
   });
 
-  test("unauth for anon", async function () {
+  test("unauth for non-Admin user", async function () {
     const resp = await request(app)
         .patch(`/companies/c1`)
         .send({
@@ -281,14 +290,14 @@ describe("PATCH /companies/:handle", function () {
 /************************************** DELETE /companies/:handle */
 
 describe("DELETE /companies/:handle", function () {
-  test("works for users", async function () {
+  test("works for admin users", async function () {
     const resp = await request(app)
         .delete(`/companies/c1`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.body).toEqual({ deleted: "c1" });
   });
 
-  test("unauth for anon", async function () {
+  test("unauth for non-admin user", async function () {
     const resp = await request(app)
         .delete(`/companies/c1`);
     expect(resp.statusCode).toEqual(401);
