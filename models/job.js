@@ -12,8 +12,6 @@ class Job {
    * data should be { id, title, salary, equity, companyHandle }
    *
    * Returns { id, title, salary, equity, companyHandle }
-   *
-   * Throws BadRequestError if job already in database.
    * */
 
     static async create(data) {
@@ -36,9 +34,9 @@ class Job {
 
   /** Find all jobs.
    * OPtional Filters
-   *    title (will find case-insensitive, partial matches)
-   *    minSalary
-   *    hasEquity (true returns only jobs with equity > 0; otherwise ignored)
+   *    title: filter by job title. Like before, this should be a case-insensitive, matches-any-part-of-string search.
+   *    minSalary: filter to jobs with at least that salary.
+   *    hasEquity: if true, filter to jobs that provide a non-zero amount of equity. If false or not included in the filtering, list all jobs regardless of equity
    * Returns [{ id, title, salary, equity, companyHandle }, ...]
    * */
 
