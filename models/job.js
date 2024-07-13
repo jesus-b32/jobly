@@ -9,7 +9,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Job {
   /** Create a job (from data), update db, return new job data.
    *
-   * data should be { id, title, salary, equity, companyHandle }
+   * data should be { title, salary, equity, companyHandle }
    *
    * Returns { id, title, salary, equity, companyHandle }
    * */

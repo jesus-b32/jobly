@@ -125,7 +125,6 @@ describe("findAll", function () {
             hasEquity: true
         }
         const jobs = await Job.findAll(filters);
-        console.log("jobs: ", jobs);
         expect(jobs).toEqual([
             {
                 id: 2,
@@ -242,15 +241,6 @@ describe("update", function () {
             expect(err instanceof NotFoundError).toBeTruthy();
         }
     });
-
-    // test("bad request with no data", async function () {
-    //     try {
-    //         await Company.update("c1", {});
-    //         fail();
-    //     } catch (err) {
-    //         expect(err instanceof BadRequestError).toBeTruthy();
-    //     }
-    // });
 });
 
 /************************************** remove */
