@@ -204,6 +204,49 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
+
+  static async jobApplication(data) {
+    const jobId = data.jobId;
+    const username = data.username;
+
+    const jobCheck = await db.query(
+      `SELECT id
+       FROM jobs
+       WHERE id = $1`, [jobId]);
+
+    if (!jobCheck.rows[0]) throw new NotFoundError(`No job id found: ${jobId}`);
+
+    const userCheck2 = await db.query(
+          `SELECT username
+          FROM users
+          WHERE username = $1`, [username]);
+
+    if (!userCheck2.rows[0]) throw new NotFoundError(`No username found: ${username}`);
+
+    const duplicateJobApply = await db.query(
+          `SELECT username, job_id
+          FROM applications
+          WHERE username = $1 AND job_id = $2`,
+        [username, jobId],
+    );
+
+    if (duplicateJobApply.rows[0]) {
+      throw new BadRequestError(`Username, ${username}, already applied for job id: ${jobId}`);
+    }
+
+    const result = await db.query(
+          `INSERT INTO applications
+          (username, job_id)
+          VALUES ($1, $2)
+          RETURNING username, job_id AS "jobId"`,
+        [
+          username,
+          jobId
+        ]
+    );
+
+    return result.rows[0];
+  }
 }
 
 
