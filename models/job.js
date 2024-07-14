@@ -82,7 +82,7 @@ class Job {
 
   /** Given a job id, return data about job.
    *
-   * Returns { id, title, salary, equity company }
+   * Returns { id, title, salary, equity, company }
    *    where company is { handle, name, description, numEmployees, logoUrl }
    * Throws NotFoundError if not found.
    **/

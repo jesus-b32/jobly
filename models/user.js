@@ -118,7 +118,7 @@ class User {
   /** Given a username, return data about user.
    *
    * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
+   *   where jobs is [jobId, jobId, ... ]
    *
    * Throws NotFoundError if user not found.
    **/
@@ -138,6 +138,13 @@ class User {
     const user = userRes.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+
+    const jobApplicationsRes = await db.query(
+      `SELECT job_id
+       FROM applications
+       WHERE username = $1`, [username]);
+
+    user.jobs = jobApplicationsRes.rows.map(a => a.job_id);
 
     return user;
   }
@@ -205,6 +212,13 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
+
+  /** Allows users to apply to different jobs.
+   *data = {username, jobId}
+   *
+   * Throws BadRequestError on applying for same job.
+   * Thorws NotFoundError when no job ID and username found
+   **/
   static async jobApplication(data) {
     const jobId = data.jobId;
     const username = data.username;
@@ -234,18 +248,11 @@ class User {
       throw new BadRequestError(`Username, ${username}, already applied for job id: ${jobId}`);
     }
 
-    const result = await db.query(
+    await db.query(
           `INSERT INTO applications
           (username, job_id)
-          VALUES ($1, $2)
-          RETURNING username, job_id AS "jobId"`,
-        [
-          username,
-          jobId
-        ]
-    );
-
-    return result.rows[0];
+          VALUES ($1, $2)`,
+        [username, jobId]);
   }
 }
 

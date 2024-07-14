@@ -13,6 +13,8 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM jobs");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM applications");
 
   //use this to restart a serial sequence for job.id
   await db.query("ALTER SEQUENCE jobs_id_seq RESTART WITH 1");
@@ -86,7 +88,7 @@ async function commonBeforeAll() {
         title: "j3",
         salary: 200000,
         equity: null,
-        companyHandle: "c3"
+        companyHandle: "c1"
       });
 }
 

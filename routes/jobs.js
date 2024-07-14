@@ -81,7 +81,7 @@ router.get("/", async function (req, res, next) {
  *  Job is { id, title, salary, equity, company }
  *   where company is { handle, name, description, numEmployees, logoUrl }
  *
- * Authorization required: admin
+ * Authorization required: none
  */
 
 router.get("/:id", async function (req, res, next) {

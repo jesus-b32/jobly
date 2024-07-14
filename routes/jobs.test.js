@@ -79,7 +79,7 @@ describe("POST /jobs", function () {
 /************************************** GET /companies */
 
 describe("GET /jobs", function () {
-    test("ok for anon", async function () {
+    test("ok for any user", async function () {
         const resp = await request(app).get("/jobs");
         expect(resp.body).toEqual({
         jobs:
@@ -103,7 +103,7 @@ describe("GET /jobs", function () {
                     title: "j3",
                     salary: 200000,
                     equity: null,
-                    companyHandle: "c3"
+                    companyHandle: "c1"
                 },
             ],
         });
@@ -143,7 +143,7 @@ describe("GET /jobs", function () {
                         title: "j3",
                         salary: 200000,
                         equity: null,
-                        companyHandle: "c3"
+                        companyHandle: "c1"
                     }
                 ]
         });
@@ -187,7 +187,7 @@ describe("GET /jobs", function () {
     });
 });
 
-/************************************** GET /jobs/:handle */
+/************************************** GET /jobs/:id */
 
 describe("GET /jobs/:id", function () {
     test("works for anon", async function () {
@@ -208,19 +208,6 @@ describe("GET /jobs/:id", function () {
         }
         });
     });
-
-    // test("works for anon: company w/o jobs", async function () {
-    //     const resp = await request(app).get(`/jobs/1`);
-    //     expect(resp.body).toEqual({
-    //     company: {
-    //         handle: "c2",
-    //         name: "C2",
-    //         description: "Desc2",
-    //         numEmployees: 2,
-    //         logoUrl: "http://c2.img",
-    //     },
-    //     });
-    // });
 
     test("not found for no such job", async function () {
         const resp = await request(app).get(`/jobs/0`);

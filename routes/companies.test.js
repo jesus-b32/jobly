@@ -75,7 +75,7 @@ describe("POST /companies", function () {
 /************************************** GET /companies */
 
 describe("GET /companies", function () {
-  test("ok for anon", async function () {
+  test("ok for any user", async function () {
     const resp = await request(app).get("/companies");
     expect(resp.body).toEqual({
       companies:
@@ -194,7 +194,7 @@ describe("GET /companies", function () {
 /************************************** GET /companies/:handle */
 
 describe("GET /companies/:handle", function () {
-  test("works for anon", async function () {
+  test("works for any user", async function () {
     const resp = await request(app).get(`/companies/c1`);
     expect(resp.body).toEqual({
       company: {
@@ -203,24 +203,39 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [
+          {
+            id: 1,
+            title: "j1",
+            salary: 75000,
+            equity: "0"
+          },
+          {
+            id: 3,
+            title: "j3",
+            salary: 200000,
+            equity: null
+          }
+        ]
       },
     });
   });
 
-  test("works for anon: company w/o jobs", async function () {
-    const resp = await request(app).get(`/companies/c2`);
+  test("request on company w/o jobs", async function () {
+    const resp = await request(app).get(`/companies/c3`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c2",
-        name: "C2",
-        description: "Desc2",
-        numEmployees: 2,
-        logoUrl: "http://c2.img",
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+        jobs: []
       },
     });
   });
 
-  test("not found for no such company", async function () {
+  test("company not found", async function () {
     const resp = await request(app).get(`/companies/nope`);
     expect(resp.statusCode).toEqual(404);
   });

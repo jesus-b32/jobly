@@ -166,7 +166,7 @@ describe("get", function () {
         });
     });
 
-    test("not found if no such job", async function () {
+    test("job not found", async function () {
         try {
             await Job.get(0);
             fail();
@@ -233,7 +233,7 @@ describe("update", function () {
         }]);
     });
 
-    test("not found if no such job", async function () {
+    test("job not found", async function () {
         try {
             await Job.update(0, updateData);
             fail();
@@ -253,7 +253,7 @@ describe("remove", function () {
         expect(res.rows.length).toEqual(0);
     });
 
-    test("not found if no such job", async function () {
+    test("job not found", async function () {
         try {
             await Job.remove(0);
             fail();

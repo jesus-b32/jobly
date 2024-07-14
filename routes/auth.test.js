@@ -74,7 +74,7 @@ describe("POST /auth/token", function () {
 /************************************** POST /auth/register */
 
 describe("POST /auth/register", function () {
-  test("works for anon", async function () {
+  test("works for any user", async function () {
     const resp = await request(app)
         .post("/auth/register")
         .send({

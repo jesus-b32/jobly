@@ -88,7 +88,7 @@ describe("register", function () {
     expect(found.rows[0].password.startsWith("$2b$")).toEqual(true);
   });
 
-  test("bad request with dup data", async function () {
+  test("bad request with duplicate data", async function () {
     try {
       await User.register({
         ...newUser,
@@ -140,10 +140,11 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
+      jobs: [1, 3]
     });
   });
 
-  test("not found if no such user", async function () {
+  test("user not found", async function () {
     try {
       await User.get("nope");
       fail();
@@ -187,7 +188,7 @@ describe("update", function () {
     expect(found.rows[0].password.startsWith("$2b$")).toEqual(true);
   });
 
-  test("not found if no such user", async function () {
+  test("user not found", async function () {
     try {
       await User.update("nope", {
         firstName: "test",
@@ -219,7 +220,7 @@ describe("remove", function () {
     expect(res.rows.length).toEqual(0);
   });
 
-  test("not found if no such user", async function () {
+  test("user not found", async function () {
     try {
       await User.remove("nope");
       fail();
@@ -227,4 +228,59 @@ describe("remove", function () {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
+});
+
+
+/************************************** jobApplication */
+
+describe("jobApplication", function () {
+  const newApplication = {
+    username: "u2",
+    jobId: 1
+  };
+
+  test("works", async function () {
+    await User.jobApplication(newApplication);
+    const found = await db.query(`SELECT * FROM applications 
+      WHERE username = 'u2' AND job_id = '1'`);
+    console.log("found: ", found.rows);
+    expect(found.rows.length).toEqual(1);
+    expect(found.rows[0].username).toEqual('u2');
+    expect(found.rows[0].job_id).toEqual(1);
+  });
+
+  test("bad request with duplicate job application", async function () {
+    try {
+      await User.jobApplication(newApplication);
+      await User.jobApplication(newApplication);
+      fail();
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  test("job id not found", async function () {
+    try {
+      await User.jobApplication({
+        username: "u1",
+        jobId: 0
+      });
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("username not found", async function () {
+    try {
+      await User.jobApplication({
+        username: "none",
+        jobId: 1
+      });
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
 });

@@ -45,7 +45,7 @@ describe("create", function () {
     ]);
   });
 
-  test("bad request with dupe", async function () {
+  test("bad request with duplicate", async function () {
     try {
       await Company.create(newCompany);
       await Company.create(newCompany);
@@ -185,7 +185,7 @@ describe("get", function () {
     });
   });
 
-  test("not found if no such company", async function () {
+  test("company handle not found", async function () {
     try {
       await Company.get("nope");
       fail();
@@ -252,7 +252,7 @@ describe("update", function () {
     }]);
   });
 
-  test("not found if no such company", async function () {
+  test("company not found", async function () {
     try {
       await Company.update("nope", updateData);
       fail();
@@ -281,7 +281,7 @@ describe("remove", function () {
     expect(res.rows.length).toEqual(0);
   });
 
-  test("not found if no such company", async function () {
+  test("company not found", async function () {
     try {
       await Company.remove("nope");
       fail();
