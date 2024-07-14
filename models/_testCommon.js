@@ -8,6 +8,11 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM jobs");
+
+  //use this to restart a serial sequence for job.id
+  await db.query("ALTER SEQUENCE jobs_id_seq RESTART WITH 1");
 
   await db.query(`
     INSERT INTO companies(handle, name, num_employees, description, logo_url)
@@ -30,19 +35,17 @@ async function commonBeforeAll() {
   ]);
 
   await db.query(`
-    INSERT INTO jobs(id,
-                      title,
+    INSERT INTO jobs(title,
                       salary,
                       equity,
                       company_handle)
-    VALUES (1, 'j1', 70000, '0', 'c1'),
-           (2, 'j2', 100000, '0.100', 'c2'),
-           (3, 'j3', 500000, NULL, 'c3')
+    VALUES ('j1', 70000, '0', 'c1'),
+           ('j2', 100000, '0.100', 'c2'),
+           ('j3', 500000, NULL, 'c3')
     RETURNING id`);
 }
 
 async function commonBeforeEach() {
-  // await db.query("ALTER SEQUENCE messages_id_seq RESTART WITH 1");
   await db.query("BEGIN");
 }
 

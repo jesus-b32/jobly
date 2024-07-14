@@ -26,9 +26,9 @@ describe("create", function () {
     };
 
     test("works", async function () {
-        let job = await Job.create(newJob);
+        const job = await Job.create(newJob);
         expect(job).toEqual({
-            id: job.id,
+            id: 4,
             ...newJob
         });
 

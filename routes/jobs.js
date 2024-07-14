@@ -111,8 +111,8 @@ router.patch("/:id", ensureIsAdmin, async function (req, res, next) {
             const errs = validator.errors.map(e => e.stack);
             throw new BadRequestError(errs);
         }
-
-        const job = await Job.update(req.params.id, req.body);
+        const id = Number(req.params.id);
+        const job = await Job.update(id, req.body);
         return res.json({ job });
     } catch (err) {
         return next(err);
@@ -126,8 +126,9 @@ router.patch("/:id", ensureIsAdmin, async function (req, res, next) {
 
 router.delete("/:id", ensureIsAdmin, async function (req, res, next) {
     try {
-        await Job.remove(req.params.id);
-        return res.json({ deleted: req.params.id });
+        const id = Number(req.params.id)
+        await Job.remove(id);
+        return res.json({ deleted: id });
     } catch (err) {
         return next(err);
     }
